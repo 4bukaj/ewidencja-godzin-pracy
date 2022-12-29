@@ -1,0 +1,83 @@
+#pdf {
+  background-color: #fff;
+  width: 100%;
+  margin: auto;
+  padding: 60px 0;
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+.header {
+  text-align: center;
+}
+
+.small-text {
+  font-size: 2.2vw;
+}
+
+.big-text {
+  font-size: 2.8vw;
+}
+
+.mb100 {
+  margin-bottom: 100px;
+}
+
+.mb45 {
+  margin-bottom: 45px;
+}
+
+.mb30 {
+  margin-bottom: 30px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #000;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 34px;
+}
+
+th {
+  font-weight: 700;
+  padding: 30px 30px;
+}
+
+th:nth-child(1) {
+  width: 14%;
+}
+
+th:nth-child(2) {
+  width: 19%;
+}
+
+th:nth-child(3) {
+  width: 20%;
+}
+
+th:nth-child(4) {
+  width: 30%;
+}
+
+th:nth-child(5) {
+  width: 17%;
+}
+
+tr > td:nth-child(1) {
+  font-weight: 700;
+  padding: 8px 0;
+}
+
+#insertStartDate {
+  border-bottom: 1px dotted;
+  padding: 0 15px;
+  text-align: center;
+}
+
+#insertMonth,
+#insertName {
+  border-bottom: 3px dotted;
+  padding: 0 60px;
+  text-align: center;
+}
