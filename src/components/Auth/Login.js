@@ -8,6 +8,9 @@ import { TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../contexts/Auth";
 import { Link, useNavigate } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 export default function Login() {
   const { watch, register } = useForm();
@@ -47,42 +50,66 @@ export default function Login() {
     <div className="auth-container">
       <div className="auth-content">
         <div className="title-container">
-          <p className="h1">WYPEŁNIJ SE EWIDENCJE</p>
-          <p className="h3 text-light">
-            Zaloguj się i wygeneruj ewidencje na ten miesiąc
-          </p>
+          <p className="h1 mb30">WYPEŁNIJ SE EWIDENCJE</p>
+          <p className="h3  text-light">Zaloguj się i zobacz jakie to proste</p>
         </div>
         <form className="auth-form">
           <section className="auth-form-control">
-            <Box
+            <div className="input-container">
+              <TextField
+                id="outlined-basic"
+                label="Email"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MailOutlineIcon
+                        sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                helperText={emailError}
+                error={emailError && true}
+                {...register("email")}
+                className="box-input"
+              />
+            </div>
+            {/* <Box
               className="auth-form-box"
               sx={{ display: "flex", alignItems: "flex-end" }}
             >
               <AlternateEmailIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
               <TextField
                 label="Email"
-                variant="standard"
+                variant="outlined"
                 helperText={emailError}
                 error={emailError && true}
                 {...register("email")}
                 className="box-input"
               />
-            </Box>
-            <Box
-              className="auth-form-box"
-              sx={{ display: "flex", alignItems: "flex-end" }}
-            >
-              <HttpsIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
+            </Box> */}
+            <div className="input-container">
               <TextField
+                id="outlined-basic"
                 label="Hasło"
-                variant="standard"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOpenIcon
+                        sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
                 type="password"
                 helperText={passwordError}
                 error={passwordError && true}
                 {...register("password")}
                 className="box-input"
               />
-            </Box>
+            </div>
             <Button
               onClick={handleSubmit}
               type="submit"

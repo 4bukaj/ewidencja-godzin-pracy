@@ -20,6 +20,7 @@
   font-size: 28px;
   font-weight: 700;
   color: rgba(49, 80, 125);
+  text-transform: uppercase;
 }
 
 .h3 {
@@ -51,11 +52,23 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+  padding: 60px 30px;
 }
 
-.auth-form-box {
-  margin: 35px auto;
+.double-input-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
+
+.double-input-row > .input-container {
+  width: 46%;
+}
+
+.input-container {
+  margin-bottom: 40px;
+}
+
 
 .box-input {
   width: 100%;
@@ -76,8 +89,6 @@
   width: 70%;
   min-width: 450px;
   margin: auto;
-  margin-top: 15px;
-  margin-bottom: 50px;
 }
 
 .auth-form-signature {

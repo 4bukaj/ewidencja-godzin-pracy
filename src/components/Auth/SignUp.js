@@ -19,6 +19,10 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CanvasDraw from "react-canvas-draw";
+import InputAdornment from "@mui/material/InputAdornment";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import BadgeIcon from "@mui/icons-material/Badge";
 
 export default function SignUp() {
   const [formStep, setFormStep] = useState(0);
@@ -30,12 +34,12 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState();
   const { currentUser } = useAuth();
   const userInfoDB = collection(db, "users-data");
-  const [imageUpload, setImageUpload] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const canvas = useRef(null);
-  const [firstSignature, setFirstSignature] = useState();
-  const [secondSignature, setSecondSignature] = useState();
-  const [thirdSignature, setThirdSignature] = useState();
+  const [title, setTitle] = useState("stwórz konto");
+  const [subtitle, setSubtitle] = useState(
+    "A następnie podaj nam kilka szczegółów"
+  );
 
   async function createAccount(e) {
     e.preventDefault();
@@ -61,6 +65,8 @@ export default function SignUp() {
           break;
       }
     }
+    setTitle("KONTO ZOSTAŁO STWORZONE");
+    setSubtitle("Zostało jeszcze kilka szczegółów");
   }
 
   const updateUserInfo = async (e) => {
@@ -69,6 +75,7 @@ export default function SignUp() {
     try {
       await setDoc(doc(db, "users-data", currentUser.uid), {
         name: watch().name,
+        lastname: watch().lastname,
         startDate: selectedDate,
       });
       // if (imageUpload == null) return;
@@ -83,6 +90,8 @@ export default function SignUp() {
     }
 
     setFormStep((cur) => cur + 1);
+    setTitle(`ŚWIETNIE ${watch().name}!`);
+    setSubtitle("Teraz poprosimy o autograf (1/3)");
   };
 
   const clearCanvas = () => {
@@ -91,159 +100,223 @@ export default function SignUp() {
 
   const updateSignature = async (e) => {
     e.preventDefault();
-    setFirstSignature(canvas.current.getDataURL());
-    await updateDoc(doc(db, "users-data", currentUser.uid), {
-      signature: canvas.current.getDataURL(),
-    });
-    navigate("/");
+    if (formStep === 2) {
+      await updateDoc(doc(db, "users-data", currentUser.uid), {
+        firstSignature: canvas.current.getDataURL(),
+      });
+      setTitle("Jeszcze raz");
+      setSubtitle("Teraz poprosimy o autograf (2/3)");
+    } else if (formStep === 3) {
+      await updateDoc(doc(db, "users-data", currentUser.uid), {
+        secondSignature: canvas.current.getDataURL(),
+      });
+      setTitle("To już ostatni");
+      setSubtitle("Teraz poprosimy o autograf (3/3)");
+    } else {
+      await updateDoc(doc(db, "users-data", currentUser.uid), {
+        thirdSignature: canvas.current.getDataURL(),
+      });
+      navigate("/");
+    }
+
+    canvas.current.clear();
+    setFormStep((cur) => cur + 1);
   };
 
   return (
     <div className="auth-container">
       <div className="auth-content">
         <div className="title-container">
-          <p className="h1">STWÓRZ KONTO</p>
-          <p className="h3 text-light">i sprawdź jakie to proste</p>
+          <p className="h1 mb30">{title}</p>
+          <p className="h3 text-light">{subtitle}</p>
         </div>
         <form className="auth-form">
-          {formStep === 0 && (
-            <section className="auth-form-control">
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <AlternateEmailIcon
-                  sx={{ color: iconsColor, mr: 1, my: 0.5 }}
-                />
-                <TextField
-                  label="Email"
-                  variant="standard"
-                  helperText={emailError}
-                  error={emailError && true}
-                  {...register("email")}
-                  className="box-input"
-                />
-              </Box>
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <HttpsIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-                <TextField
-                  label="Hasło"
-                  variant="standard"
-                  type="password"
-                  helperText={passwordError}
-                  error={passwordError && true}
-                  {...register("password")}
-                  className="box-input"
-                />
-              </Box>
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <HttpsIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-                <TextField
-                  label="Powtórz hasło"
-                  variant="standard"
-                  type="password"
-                  helperText={passwordError}
-                  error={passwordError && true}
-                  {...register("confirmpassword")}
-                  className="box-input"
-                />
-              </Box>
-              <Button
-                onClick={createAccount}
-                type="button"
-                title="Dalej"
-                style="solid"
-              />
-            </section>
-          )}
-          {formStep === 1 && (
-            <section className="auth-form-control">
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <AccountBoxIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-                <TextField
-                  label="Imię i Nazwisko"
-                  variant="standard"
-                  {...register("name")}
-                  className="box-input"
-                />
-              </Box>
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <AccountBoxIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Stack spacing={4} sx={{ width: "250px" }}>
-                    <DatePicker
-                      label="Data podpisania umowy"
-                      inputFormat="DD/MM/YYYY"
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="standard"
-                          {...register("date")}
-                        />
-                      )}
-                      value={selectedDate}
-                      onChange={(newValue) => {
-                        setSelectedDate(new Date(newValue));
-                      }}
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              </Box>
+          <section className="auth-form-control">
+            {formStep === 0 && (
+              <>
+                <div className="input-container">
+                  <TextField
+                    id="outlined-basic"
+                    label="Email"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <MailOutlineIcon
+                            sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                    variant="outlined"
+                    helperText={emailError}
+                    error={emailError && true}
+                    {...register("email")}
+                    className="box-input"
+                  />
+                </div>
+                <div className="input-container">
+                  <TextField
+                    id="outlined-basic"
+                    label="Hasło"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockOpenIcon
+                            sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                    variant="outlined"
+                    type="password"
+                    helperText={passwordError}
+                    error={passwordError && true}
+                    {...register("password")}
+                    className="box-input"
+                  />
+                </div>
 
-              <Button
-                type="button"
-                title="Stwórz konto"
-                onClick={updateUserInfo}
-                style="solid"
-              />
-            </section>
-          )}
-          {formStep === 2 && (
-            <section className="auth-form-control">
-              <CanvasDraw
-                className="auth-form-signature"
-                lazyRadius={1}
-                brushRadius={3}
-                brushColor="#000"
-                canvasWidth={400}
-                canvasHeight={100}
-                ref={canvas}
-              />
-              <div className="double-button">
+                <div className="input-container">
+                  <TextField
+                    id="outlined-basic"
+                    label="Powtórz hasło"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockOpenIcon
+                            sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                    variant="outlined"
+                    type="password"
+                    helperText={passwordError}
+                    error={passwordError && true}
+                    {...register("confirmpassword")}
+                    className="box-input"
+                  />
+                </div>
                 <Button
-                  type="button"
-                  title="Reset"
-                  onClick={clearCanvas}
-                  style="outlined"
-                />
-                <Button
+                  onClick={createAccount}
                   type="submit"
-                  title="Stwórz konto"
-                  onClick={updateSignature}
+                  title="Dalej"
                   style="solid"
                 />
-              </div>
-            </section>
-          )}
+              </>
+            )}
+            {formStep === 1 && (
+              <>
+                <div className="double-input-row">
+                  <div className="input-container">
+                    <TextField
+                      id="outlined-basic"
+                      label="Imię"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <BadgeIcon
+                              sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      variant="outlined"
+                      helperText={emailError}
+                      error={emailError && true}
+                      {...register("name")}
+                      className="box-input"
+                    />
+                  </div>
+                  <div className="input-container">
+                    <TextField
+                      id="outlined-basic"
+                      label="Nazwisko"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <BadgeIcon
+                              sx={{ color: iconsColor, mr: 1, my: 0.5 }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      variant="outlined"
+                      helperText={emailError}
+                      error={emailError && true}
+                      {...register("lastname")}
+                      className="box-input"
+                    />
+                  </div>
+                </div>
+                <div className="input-container">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Stack spacing={4} sx={{ width: "100%" }}>
+                      <DatePicker
+                        label="Data podpisania umowy"
+                        inputFormat="DD/MM/YYYY"
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            {...register("date")}
+                          />
+                        )}
+                        value={selectedDate}
+                        onChange={(newValue) => {
+                          setSelectedDate(new Date(newValue));
+                        }}
+                      />
+                    </Stack>
+                  </LocalizationProvider>
+                </div>
+
+                <Button
+                  type="submit"
+                  title="Dalej"
+                  onClick={updateUserInfo}
+                  style="solid"
+                />
+              </>
+            )}
+            {formStep >= 2 && (
+              <>
+                <CanvasDraw
+                  className="auth-form-signature"
+                  lazyRadius={1}
+                  brushRadius={3}
+                  brushColor="#000"
+                  canvasWidth={400}
+                  canvasHeight={100}
+                  ref={canvas}
+                  hideGrid
+                />
+                <div className="double-button">
+                  <Button
+                    type="button"
+                    title="Reset"
+                    onClick={clearCanvas}
+                    style="outlined"
+                  />
+                  <Button
+                    type="submit"
+                    title={formStep === 4 ? "Stwórz konto" : "Dalej"}
+                    onClick={updateSignature}
+                    style="solid"
+                  />
+                </div>
+              </>
+            )}
+          </section>
         </form>
-        <div className="bottom-controls">
-          <span className="text-light">Masz już konto?&nbsp;</span>
-          <Link to="/login" className="bottom-controls-link">
-            Zaloguj się
-          </Link>
-        </div>
+        {formStep === 0 && (
+          <div className="bottom-controls">
+            <span className="text-light">Masz już konto?&nbsp;</span>
+            <Link to="/login" className="bottom-controls-link">
+              Zaloguj się
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

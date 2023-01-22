@@ -23,7 +23,7 @@ let months = [
 
 function getMonthNum() {
   let month = new Date().getMonth();
-  if (month < 10) return "0" + month + 1;
+  if (month < 10) return "0" + (Number(month) + 1);
   else return month + 1;
 }
 
@@ -65,11 +65,18 @@ hours = hours.map(function (x) {
 
 //END OF GENERATING HOURS
 
-export function createTable(userName, userStartDate, userSignature) {
+export function createTable(
+  userName,
+  userLastName,
+  userStartDate,
+  firstSignature,
+  secondSignature,
+  thirdSignature
+) {
   let table = document.getElementById("table");
   table.innerHTML = "";
   let startDate = userStartDate;
-  let name = userName;
+  let name = userLastName + " " + userName;
   let it = 0;
 
   document.getElementById("insertStartDate").innerHTML = startDate;
@@ -94,9 +101,12 @@ export function createTable(userName, userStartDate, userSignature) {
           td.classList.add("bold");
         } else {
           let img = document.createElement("img");
-          img.src = userSignature;
-          if (i === 32) img.style.height = "80px";
-          else img.style.height = "60px";
+          let randSignature = Math.floor(Math.random() * 3) + 1;
+          if (randSignature === 1) img.src = firstSignature;
+          else if (randSignature === 2) img.src = secondSignature;
+          else img.src = thirdSignature;
+          if (i === 32) img.style.height = "45px";
+          else img.style.height = "30px";
           img.style.width =
             Math.floor(Math.random() * (95 - 70 + 1)) + 70 + "%";
           img.style.marginLeft =
@@ -124,8 +134,23 @@ export function createTable(userName, userStartDate, userSignature) {
   }
 }
 
-export const exportPDF = (userName, startDate, userSignature) => {
-  createTable(userName, startDate, userSignature);
+export const exportPDF = (
+  userName,
+  userLastName,
+  startDate,
+  firstSignature,
+  secondSignature,
+  thirdSignature,
+  setIsDownloading
+) => {
+  createTable(
+    userName,
+    userLastName,
+    startDate,
+    firstSignature,
+    secondSignature,
+    thirdSignature
+  );
   const input = document.getElementById("pdf");
   html2canvas(input, {
     logging: true,
@@ -137,7 +162,16 @@ export const exportPDF = (userName, startDate, userSignature) => {
     const imgData = canvas.toDataURL("img/png");
     const pdf = new jsPDF("p", "mm", "a4");
     pdf.addImage(imgData, "PNG", 20, 10, imgWidth, imgHeight);
-    pdf.save("testPDF.pdf");
+    pdf.save(
+      today.getFullYear() +
+        "-" +
+        getMonthNum() +
+        "__" +
+        userLastName.toUpperCase() +
+        "_" +
+        userName.toUpperCase()
+    );
+    setIsDownloading(false);
   });
 };
 
@@ -150,7 +184,7 @@ export default function Content() {
           <p className="big-text mb30">
             Ewidencja godzin wykonywania umowy zlecenia zawartej w dniu
           </p>
-          <p className="big-text">
+          <p className="big-text mb30">
             <span id="insertStartDate">20.08.2019</span> r.
           </p>
         </div>

@@ -1,27 +1,46 @@
-.home-container {
+.home-container{
   width: 100vw;
   height: 100vh;
   position: absolute;
-  background-color: var(--light);
 }
 
-.home-content {
-  background-color: #fff;
-  width: 50%;
-  margin: auto;
-  padding: 30px;
-  border-radius: 15px;
+.user-data {
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 }
 
-.btns-container {
-  border: 1px solid red;
+.user-data > h1 {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.user-data > p {
+  margin: 10px;
+}
+
+.signatures-container {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
+  box-sizing: border-box;
 }
 
-.btn-container {
-  border: 1px solid red;
-  width: 30%;
+.light-color {
+  color: var(--secondary);
+}
+
+.link {
+  cursor: pointer;
+}
+
+button:disabled,
+button[disabled]{
+  background-color: #cccccc;
+  border-color: #cccccc;
+  cursor: wait;
+}
+
+button {
+  transition: 0.15s;
 }
