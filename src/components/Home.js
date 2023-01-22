@@ -39,24 +39,24 @@ export default function Home() {
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          console.log(docSnap.data());
           setUserName(docSnap.data().name);
           setStartDate(
             formatDate(new Date(docSnap.data().startDate.seconds * 1000))
           );
+          setUserSignature(docSnap.data().signature);
         }
       } catch (error) {
         console.log(error);
       }
     };
     //getting signature img
-    listAll(imageRef).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setUserSignature((prev) => [...prev, url]);
-        });
-      });
-    });
+    // listAll(imageRef).then((response) => {
+    //   response.items.forEach((item) => {
+    //     getDownloadURL(item).then((url) => {
+    //       setUserSignature((prev) => [...prev, url]);
+    //     });
+    //   });
+    // });
 
     getUserData();
   }, []);

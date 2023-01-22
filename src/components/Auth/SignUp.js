@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { TextField } from "@mui/material";
 import "./Auth.css";
 import Button from "../button/Button";
@@ -10,7 +10,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { useAuth, currentUser } from "../../contexts/Auth";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, updateDoc } from "firebase/firestore";
 import { storage } from "../../firebase";
 import { ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
@@ -18,6 +18,7 @@ import { Stack } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CanvasDraw from "react-canvas-draw";
 
 export default function SignUp() {
   const [formStep, setFormStep] = useState(0);
@@ -31,6 +32,10 @@ export default function SignUp() {
   const userInfoDB = collection(db, "users-data");
   const [imageUpload, setImageUpload] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const canvas = useRef(null);
+  const [firstSignature, setFirstSignature] = useState();
+  const [secondSignature, setSecondSignature] = useState();
+  const [thirdSignature, setThirdSignature] = useState();
 
   async function createAccount(e) {
     e.preventDefault();
@@ -62,25 +67,35 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      // await addDoc(userInfoDB, {
-      //   userID: currentUser.uid,
-      //   name: watch().name,
-      //   startDate: selectedDate,
-      // });
       await setDoc(doc(db, "users-data", currentUser.uid), {
         name: watch().name,
         startDate: selectedDate,
       });
-      if (imageUpload == null) return;
-      const imageRef = ref(
-        storage,
-        `${currentUser.uid}/${imageUpload.name + v4()}`
-      );
-      uploadBytes(imageRef, imageUpload);
-      navigate("/");
+      // if (imageUpload == null) return;
+      // const imageRef = ref(
+      //   storage,
+      //   `${currentUser.uid}/${imageUpload.name + v4()}`
+      // );
+      // uploadBytes(imageRef, imageUpload);
+      // navigate("/");
     } catch (error) {
       console.log(error);
     }
+
+    setFormStep((cur) => cur + 1);
+  };
+
+  const clearCanvas = () => {
+    canvas.current.clear();
+  };
+
+  const updateSignature = async (e) => {
+    e.preventDefault();
+    setFirstSignature(canvas.current.getDataURL());
+    await updateDoc(doc(db, "users-data", currentUser.uid), {
+      signature: canvas.current.getDataURL(),
+    });
+    navigate("/");
   };
 
   return (
@@ -186,25 +201,40 @@ export default function SignUp() {
                   </Stack>
                 </LocalizationProvider>
               </Box>
-              <Box
-                className="auth-form-box"
-                sx={{ display: "flex", alignItems: "flex-end" }}
-              >
-                <AccountBoxIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    setImageUpload(e.target.files[0]);
-                  }}
-                />
-              </Box>
 
               <Button
-                type="submit"
+                type="button"
                 title="Stwórz konto"
                 onClick={updateUserInfo}
                 style="solid"
               />
+            </section>
+          )}
+          {formStep === 2 && (
+            <section className="auth-form-control">
+              <CanvasDraw
+                className="auth-form-signature"
+                lazyRadius={1}
+                brushRadius={3}
+                brushColor="#000"
+                canvasWidth={400}
+                canvasHeight={100}
+                ref={canvas}
+              />
+              <div className="double-button">
+                <Button
+                  type="button"
+                  title="Reset"
+                  onClick={clearCanvas}
+                  style="outlined"
+                />
+                <Button
+                  type="submit"
+                  title="Stwórz konto"
+                  onClick={updateSignature}
+                  style="solid"
+                />
+              </div>
             </section>
           )}
         </form>

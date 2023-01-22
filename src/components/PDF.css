@@ -69,6 +69,10 @@ tr > td:nth-child(1) {
   padding: 8px 0;
 }
 
+tr > td:nth-child(3) {
+  padding: 0 !important;
+}
+
 #insertStartDate {
   border-bottom: 1px dotted;
   padding: 0 15px;

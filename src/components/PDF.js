@@ -1,6 +1,5 @@
 import React from "react";
 import "./PDF.css";
-import signature from "../img/podpis.png";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -69,13 +68,7 @@ hours = hours.map(function (x) {
 export function createTable(userName, userStartDate, userSignature) {
   let table = document.getElementById("table");
   table.innerHTML = "";
-  // let startDate = document.getElementById("startDate").value;
   let startDate = userStartDate;
-
-  // let name =
-  //   document.getElementById("lastname").value +
-  //   " " +
-  //   document.getElementById("firstname").value;
   let name = userName;
   let it = 0;
 
@@ -102,23 +95,16 @@ export function createTable(userName, userStartDate, userSignature) {
         } else {
           let img = document.createElement("img");
           img.src = userSignature;
+          if (i === 32) img.style.height = "80px";
+          else img.style.height = "60px";
           img.style.width =
             Math.floor(Math.random() * (95 - 70 + 1)) + 70 + "%";
-          // img.style.marginLeft =
-          //   Math.floor(Math.random() * (20 - 2 + 1)) + 2 + "px";
-          // img.style.marginBottom =
-          //   Math.floor(Math.random() * (10 - 2 + 1)) + 2 + "px";
-          let rnum = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-          console.log(rnum);
-          if (rnum == 1) img.style.marginLeft = "20px";
-          else if (rnum == 2) img.style.marginRight = "20px";
-          else if (rnum == 3) img.style.marginTop = "20px";
-          else img.style.marginBottom = "20px";
+          img.style.marginLeft =
+            Math.floor(Math.random() * (20 - 2 + 1)) + 2 + "px";
           td.appendChild(img);
         }
       } else if (j == 1 || j == 2) {
         myDate.setDate(i);
-        //console.log(myDate);
         if (
           (myDate.getDay() == 6 || myDate.getDay() == 0 || i > daysNumber) &&
           i != 32
@@ -158,7 +144,6 @@ export const exportPDF = (userName, startDate, userSignature) => {
 export default function Content() {
   return (
     <>
-      <button onClick={exportPDF}>Download</button>
       <div id="pdf">
         <div className="header">
           <p className="small-text mb100">Załącznik nr 1</p>
