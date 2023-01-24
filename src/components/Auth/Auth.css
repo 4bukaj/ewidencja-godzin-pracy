@@ -2,11 +2,13 @@
   height: 100vh;
   width: 100vw;
   background-color: var(--light);
+
 }
 
 .auth-content {
   width: 45%;
   max-width: 650px;
+  min-width: 500px;
   margin: auto;
   position: absolute;
   top: 30%;
@@ -61,14 +63,13 @@
   justify-content: space-between;
 }
 
-.double-input-row > .input-container {
-  width: 46%;
-}
-
 .input-container {
   margin-bottom: 40px;
 }
 
+.double-input-row > .input-container {
+  width: 46%;
+}
 
 .box-input {
   width: 100%;
@@ -87,7 +88,6 @@
 
 .auth-form-control {
   width: 70%;
-  min-width: 450px;
   margin: auto;
 }
 

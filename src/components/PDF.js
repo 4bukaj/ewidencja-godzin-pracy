@@ -42,26 +42,25 @@ for (let i = 1; i <= daysNumber; i++) {
 let businessDays = daysNumber - weekends;
 
 //GENERATING HOURS ARRAY OF HOURS HERE
-let hsum = 168;
-let hours = Array(businessDays).fill(0);
+function generateHours(hsum) {
+  let hours = Array(businessDays).fill(0);
 
-while (hsum > 0) {
-  for (let i = 0; i < businessDays; i++) {
-    if (hsum > 0) {
-      let con = Math.round(Math.random());
-      if (con != 0) {
-        if (hours[i] < 12) {
-          hours[i] += 1;
-          hsum -= 1;
+  while (hsum > 0) {
+    for (let i = 0; i < businessDays; i++) {
+      if (hsum > 0) {
+        let con = Math.round(Math.random());
+        if (con != 0) {
+          if (hours[i] < 12) {
+            hours[i] += 1;
+            hsum -= 1;
+          }
         }
       }
     }
   }
-}
 
-hours = hours.map(function (x) {
-  return x;
-});
+  return hours;
+}
 
 //END OF GENERATING HOURS
 
@@ -71,7 +70,8 @@ export function createTable(
   userStartDate,
   firstSignature,
   secondSignature,
-  thirdSignature
+  thirdSignature,
+  totalHours
 ) {
   let table = document.getElementById("table");
   table.innerHTML = "";
@@ -90,7 +90,7 @@ export function createTable(
       let td = document.createElement("td");
       if (i == 32 && j == 0)
         td.innerHTML = "Liczba godzin wykonywania umowy zlecenie ogółem:";
-      else if (i == 32 && j == 1) td.innerHTML = "168";
+      else if (i == 32 && j == 1) td.innerHTML = totalHours;
       else if (j == 0) td.innerHTML = i;
       else if (j == 2) {
         if (
@@ -123,7 +123,7 @@ export function createTable(
           td.classList.add("bold");
         } else if (j == 1) {
           //adding hours here
-          td.innerHTML = hours[it];
+          td.innerHTML = generateHours(totalHours)[it];
           it++;
         }
       }
@@ -141,7 +141,8 @@ export const exportPDF = (
   firstSignature,
   secondSignature,
   thirdSignature,
-  setIsDownloading
+  setIsDownloading,
+  totalHours
 ) => {
   createTable(
     userName,
@@ -149,7 +150,8 @@ export const exportPDF = (
     startDate,
     firstSignature,
     secondSignature,
-    thirdSignature
+    thirdSignature,
+    totalHours
   );
   const input = document.getElementById("pdf");
   html2canvas(input, {
@@ -199,19 +201,21 @@ export default function Content() {
         </p>
 
         <table>
-          <tr>
-            <th>
-              Dzień <br></br>miesiąca
-            </th>
-            <th>
-              Liczba godzin<br></br> wykonywania <br></br>umowy zlecenie
-            </th>
-            <th>
-              Podpis <br></br>Zleceniobiorcy
-            </th>
-            <th>Uwagi</th>
-            <th>Podpis Zleceniodawcy lub osoby przez niego upoważnionej</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>
+                Dzień <br></br>miesiąca
+              </th>
+              <th>
+                Liczba godzin<br></br> wykonywania <br></br>umowy zlecenie
+              </th>
+              <th>
+                Podpis <br></br>Zleceniobiorcy
+              </th>
+              <th>Uwagi</th>
+              <th>Podpis Zleceniodawcy lub osoby przez niego upoważnionej</th>
+            </tr>
+          </thead>
           <tbody id="table"></tbody>
         </table>
       </div>

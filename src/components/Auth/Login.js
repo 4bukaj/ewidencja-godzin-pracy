@@ -32,13 +32,13 @@ export default function Login() {
       console.log(error.code);
       switch (error.code) {
         case "auth/invalid-email":
-          setEmailError("Wrong email format");
+          setEmailError("Niepoprawny email");
           break;
         case "auth/user-not-found":
-          setEmailError("User not found");
+          setEmailError("Nie znaleziono użytkownika");
           break;
         case "auth/wrong-password":
-          setPasswordError("Wrong password");
+          setPasswordError("Niepoprawne hasło");
           break;
         default:
           setEmailError(error.message);
@@ -75,20 +75,6 @@ export default function Login() {
                 className="box-input"
               />
             </div>
-            {/* <Box
-              className="auth-form-box"
-              sx={{ display: "flex", alignItems: "flex-end" }}
-            >
-              <AlternateEmailIcon sx={{ color: iconsColor, mr: 1, my: 0.5 }} />
-              <TextField
-                label="Email"
-                variant="outlined"
-                helperText={emailError}
-                error={emailError && true}
-                {...register("email")}
-                className="box-input"
-              />
-            </Box> */}
             <div className="input-container">
               <TextField
                 id="outlined-basic"
@@ -115,6 +101,7 @@ export default function Login() {
               type="submit"
               title="Zaloguj"
               style="solid"
+              disabled={!watch().email || !watch().password}
             />
           </section>
         </form>

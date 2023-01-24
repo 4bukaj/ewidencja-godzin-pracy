@@ -8,6 +8,7 @@ import { getDoc, doc } from "firebase/firestore";
 import { exportPDF } from "./PDF";
 import Button from "./button/Button";
 import { Link } from "react-router-dom";
+import { FormControlLabel, Checkbox, TextField } from "@mui/material";
 
 export default function Home() {
   const { logout, currentUser } = useAuth();
@@ -25,6 +26,8 @@ export default function Home() {
   const [thirdSignature, setThirdSignature] = useState();
   const imageRef = ref(storage, `${currentUser.uid}/`);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isMoreHours, setIsMoreHours] = useState(false);
+  const [hours, setHours] = useState(168);
 
   function padTo2Digits(num) {
     return num.toString().padStart(2, "0");
@@ -79,8 +82,13 @@ export default function Home() {
       firstSignature,
       secondSignature,
       thirdSignature,
-      setIsDownloading
+      setIsDownloading,
+      hours
     );
+  };
+
+  const moreHours = () => {
+    setIsMoreHours(!isMoreHours);
   };
 
   return (
@@ -93,7 +101,7 @@ export default function Home() {
             </div>
             <form className="auth-form">
               <section className="auth-form-control">
-                <div className="user-data mb100">
+                <div className="user-data mb45">
                   <h1>Twoje dane</h1>
                   <p>
                     <span className="light-color">Imię: </span>
@@ -110,10 +118,27 @@ export default function Home() {
                   <p>
                     <span className="light-color">Podpisy:</span>
                   </p>
-                  <div className="signatures-container">
+                  <div className="signatures-container mb45">
                     <img src={firstSignature} />
                     <img src={secondSignature} />
                     <img src={thirdSignature} />
+                  </div>
+                  <div>
+                    <span className="light-color">Nadgodziny?</span>
+                    <Checkbox onChange={moreHours} />
+                    {isMoreHours && (
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="number"
+                          value={hours}
+                          onChange={(e) => {
+                            setHours(e.target.value);
+                          }}
+                          sx={{ width: "125px" }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Button

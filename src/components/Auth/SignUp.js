@@ -2,11 +2,7 @@ import React, { useState, useRef } from "react";
 import { TextField } from "@mui/material";
 import "./Auth.css";
 import Button from "../button/Button";
-import Box from "@mui/material/Box";
 import { useForm } from "react-hook-form";
-import HttpsIcon from "@mui/icons-material/Https";
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { useAuth, currentUser } from "../../contexts/Auth";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase";
@@ -45,6 +41,11 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
+      if (watch().password !== watch().confirmpassword) {
+        setPasswordError("Hasła nie są takie same");
+
+        return;
+      }
       setEmailError("");
       setPasswordError("");
       await signup(watch().email, watch().password);
@@ -202,6 +203,11 @@ export default function SignUp() {
                   type="submit"
                   title="Dalej"
                   style="solid"
+                  disabled={
+                    !watch().email ||
+                    !watch().password ||
+                    !watch().confirmpassword
+                  }
                 />
               </>
             )}
@@ -276,6 +282,7 @@ export default function SignUp() {
                   title="Dalej"
                   onClick={updateUserInfo}
                   style="solid"
+                  disabled={!watch().name || !watch().lastname || !selectedDate}
                 />
               </>
             )}
@@ -286,8 +293,8 @@ export default function SignUp() {
                   lazyRadius={1}
                   brushRadius={3}
                   brushColor="#000"
-                  canvasWidth={400}
                   canvasHeight={100}
+                  canvasWidth={400}
                   ref={canvas}
                   hideGrid
                 />
