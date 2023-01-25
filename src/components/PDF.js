@@ -78,6 +78,7 @@ export function createTable(
   let startDate = userStartDate;
   let name = userLastName + " " + userName;
   let it = 0;
+  let hoursCount = generateHours(totalHours);
 
   document.getElementById("insertStartDate").innerHTML = startDate;
   document.getElementById("insertMonth").innerHTML = months[month];
@@ -123,7 +124,7 @@ export function createTable(
           td.classList.add("bold");
         } else if (j == 1) {
           //adding hours here
-          td.innerHTML = generateHours(totalHours)[it];
+          td.innerHTML = hoursCount[it];
           it++;
         }
       }

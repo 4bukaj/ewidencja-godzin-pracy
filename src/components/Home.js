@@ -88,6 +88,7 @@ export default function Home() {
   };
 
   const moreHours = () => {
+    if (isMoreHours === true) setHours(168);
     setIsMoreHours(!isMoreHours);
   };
 
