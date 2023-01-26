@@ -17,7 +17,6 @@ code {
   --secondary: #586b84;
   --light: #f1f4fe;
   --dark: #000;
-  overflow: hidden;
 }
 
 * {

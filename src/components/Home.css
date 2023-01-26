@@ -1,3 +1,8 @@
+.home-overlay {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
 .home-container{
   width: 100vw;
   height: 100vh;
@@ -15,15 +20,23 @@
   font-weight: 700;
 }
 
-.user-data > p {
+.user-data input {
+  font-size: 15px;
+  padding: 1px;
+}
+
+.user-data > div {
   margin: 10px;
 }
 
 .signatures-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-around;
-  box-sizing: border-box;
+}
+
+.signatures-container > img {
+  width: 30%;
 }
 
 .light-color {
@@ -43,4 +56,12 @@ button[disabled]{
 
 button {
   transition: 0.15s;
+}
+
+.date-container {
+  display: flex;
+}
+
+.date-items {
+  display: flex;
 }
